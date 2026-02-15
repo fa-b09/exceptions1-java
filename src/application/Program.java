@@ -25,45 +25,44 @@ public class Program {
         Locale.setDefault(Locale.US);
         Scanner sc = new Scanner(System.in);
         
-        DateTimeFormatter dtf =  DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        
+        DateTimeFormatter fmt =  DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        try{
         System.out.print("room Number: ");
         Integer roomNumber = sc.nextInt();
         sc.nextLine();
         
         System.out.print("check-in date(dd/MM/yyy):");
-        LocalDate chekin = LocalDate.parse(sc.nextLine(),dtf);
+        LocalDate chekin = LocalDate.parse(sc.nextLine(),fmt);
         
         System.out.print("check-out date(dd/MM/yyy):");
-        LocalDate chekout = LocalDate.parse(sc.nextLine(),dtf);
+        LocalDate chekout = LocalDate.parse(sc.nextLine(),fmt);
         
-        if(!chekout.isAfter(chekin)){
-            System.out.println("Error in reservation: chek-out date must be after chek-in in date   ");
-        }
-        else{
+       
             Reservation reservation = new Reservation(roomNumber, chekin, chekout);
             System.out.print(reservation);
         
             System.out.println("");
             System.out.println("Enter data to update the reservation:");
             System.out.print("check-in date(dd/MM/yyy):");
-            chekin = LocalDate.parse(sc.nextLine(),dtf);
+            chekin = LocalDate.parse(sc.nextLine(),fmt);
         
             System.out.print("check-out date(dd/MM/yyy):");
-            chekout = LocalDate.parse(sc.nextLine(),dtf);
+            chekout = LocalDate.parse(sc.nextLine(),fmt);
             
-            LocalDate now = LocalDate.now();
-            
-            if(chekin.isBefore(now) || chekout.isBefore(now)){
-                System.out.println("Error in reservation: Reservation dates for updates must be future dates");
-            }
-            else if (!chekout.isAfter(chekin)){
-                System.out.println("Error in reservation: chek-out date must be after chek-in in date   ");
-            }
-            else{
-                reservation.updateDates(chekin, chekout);
-                System.out.println(reservation);
+           reservation.updateDates(chekin, chekout);
+            System.out.println(reservation);
+        }
+        catch(DateTimeParseException e){
+            System.err.println("Error in reservation: " + e.getMessage());
+        }
+        catch(RuntimeException e){
+            System.err.println("Unexpected error" + e.getMessage());
+        }
+        finally{
                   sc.close(); 
+            
+            
+                
                 }
         }
     
