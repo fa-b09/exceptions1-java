@@ -4,10 +4,12 @@
  */
 package model.entities;
 
+import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import model.exceptions.DomainException;
 
 /**
  *
@@ -21,6 +23,12 @@ public class Reservation {
    private static DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public Reservation(Integer roomNumber, LocalDate checkin, LocalDate checkout) {
+        // declarar a exceção no construtor do metodo programação defensiva
+        if(!checkout.isAfter(checkin)){
+            throw new DomainException("chek-out date must be aftet check-in date");
+        }
+                
+        
         this.roomNumber = roomNumber;
         this.checkin = checkin;
         this.checkout = checkout;
@@ -48,13 +56,13 @@ public class Reservation {
         return ChronoUnit.DAYS.between(checkin, checkout);
         
     }
-    public void updateDates(LocalDate checkin,LocalDate checkout ){
+    public void updateDates(LocalDate checkin,LocalDate checkout ) {
         LocalDate now = LocalDate.now();
         if(checkin.isBefore(now)|| checkout.isBefore(now)){
-            throw  new IllegalArgumentException("Error in reservation: Reservation dates for updates must be future dates");
+            throw  new DomainException("Error in reservation: Reservation dates for updates must be future dates");
         }
         if(!checkout.isAfter(checkin)){
-            throw new IllegalArgumentException("Error in reservation: chek-out date must be after chek-in in date   ");
+            throw new DomainException("Error in reservation: chek-out date must be after chek-in in date   ");
         }
         this.checkin = checkin;
         this.checkout = checkout;
